@@ -22,8 +22,8 @@
 
     /* Universal Layout Variables */
     --tile-border-radius: 16px;
-    --tile-border-width: 3px; /* Slightly slimmed down to improve mobile cell spacing */
-    --tile-font-size: clamp(0.95rem, 3vw, 1.35rem); /* Proportional mobile text responsiveness */
+    --tile-border-width: 5px; /* 🌟 OPTIMIZED: Thicker boundaries for visual clarity */
+    --tile-font-size: clamp(1.2rem, 4vw, 1.75rem); /* 🌟 OPTIMIZED: Boosted minimum font size */
 }
 
 /* Functional Tile Color Classes */

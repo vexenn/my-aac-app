@@ -83,7 +83,7 @@ body {
     
     /* The Core Coordinate Engine */
     display: grid;
-    /* 🌟 minmax(0, 1fr) explicitly stops text-heavy or empty tracks from collapsing into strips */
+    /* minmax(0, 1fr) explicitly stops text-heavy or empty tracks from collapsing into strips */
     grid-template-columns: repeat(var(--grid-cols, 6), minmax(0, 1fr)) !important;
     grid-template-rows: repeat(var(--grid-rows, 4), minmax(0, 1fr)) !important;
     gap: 12px;
@@ -101,6 +101,7 @@ body {
     font-weight: bold;
     cursor: pointer;
     background-color: white;
+    color: #000000; /* OPTIMIZED: Pure black text for maximum visual contrast */
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     width: 100%;
     height: 100%;
@@ -109,12 +110,14 @@ body {
     user-select: none;
     -webkit-user-select: none;
     
-    /* Subtle mechanical click feedback animation on tap */
-    transition: transform 0.05s ease-in-out;
+    transition: transform 0.05s ease-in-out, filter 0.05s ease, box-shadow 0.05s ease;
 }
 
 .aac-tile:active {
     transform: scale(0.96);
+    /* OPTIMIZED: Adds a realistic physical "pressed" shadow and darkening effect */
+    filter: brightness(0.92); 
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.15); 
 }
 
 .aac-tile img {
@@ -128,7 +131,7 @@ body {
 #footer-controls {
     height: 8vh; /* Fixed 8% space configuration strip */
     min-height: 60px; /* Guarantees layout buttons are always touch-accessible */
-    flex-shrink: 0; /* 🌟 Enforces that this panel is pinned and never pushed off-screen */
+    flex-shrink: 0; /* Enforces that this panel is pinned and never pushed off-screen */
     background-color: #333;
     color: white;
     display: flex;
@@ -346,4 +349,161 @@ body.admin-active .coord-indicator {
     color: #ffffff;
     border-color: #00b0ff;
     box-shadow: 0 0 10px rgba(3, 169, 244, 0.4);
+}
+
+/* ==========================================================================
+   ♿ ADAPTIVE HARDWARE & SWITCH CONTROL HIGHLIGHTS
+   ========================================================================== */
+.aac-tile:focus-visible, 
+.control-btn:focus-visible, 
+.nav-arrow-btn:focus-visible, 
+.page-tab-chip:focus-visible {
+    outline: 5px solid #FF5722 !important; /* Blazing orange focus indicator */
+    outline-offset: 4px;
+    box-shadow: 0 0 15px rgba(255, 87, 34, 0.5);
+}
+
+/* ==========================================================================
+   ❓ HELP & SUPPORT MODAL STYLING MODULE
+   ========================================================================== */
+.custom-modal {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    max-width: 90vw;
+    width: 480px;
+    max-height: 80vh;
+    overflow: hidden;
+    padding: 0;
+    margin: auto;
+    background-color: #ffffff;
+    z-index: 3000;
+}
+
+.custom-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+}
+
+.modal-header {
+    padding: 16px 20px;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(80vh - 65px);
+    color: #444;
+}
+
+.modal-body h4 {
+    color: #222;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+}
+
+.modal-body h4:first-child {
+    margin-top: 0;
+}
+
+.modal-body p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* ==========================================================================
+   📱 MOBILE LANDSCAPE OPTIMIZATION MODULE
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 600px) {
+    /* 1. Slim down the top and bottom chrome to rescue precious vertical pixels */
+    #sentence-container {
+        height: 12vh;
+        min-height: 55px;
+        padding: 6px 12px;
+        gap: 10px;
+    }
+    
+    #sentence-display {
+        padding: 0 10px;
+    }
+    
+    .control-btn {
+        padding: 0 14px;
+        font-size: 0.95rem;
+    }
+    
+    #footer-controls {
+        height: 10vh;
+        min-height: 45px;
+        padding: 0 12px;
+    }
+    
+    /* 2. Tighten the communication board gaps */
+    #grid-board {
+        padding: 8px;
+        gap: 8px;
+        /* Re-enforce clean, non-collapsible tracking variables */
+        grid-template-columns: repeat(var(--grid-cols, 6), minmax(0, 1fr)) !important;
+        grid-template-rows: repeat(var(--grid-rows, 4), minmax(0, 1fr)) !important;
+    }
+    
+    /* 3. Pivot tile templates from column stacks to wide rows */
+    .aac-tile {
+        flex-direction: row !important; /* Side-by-side image and text layout */
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 8px;
+        border-radius: 8px !important; /* Removes the pill/capsule deformation */
+    }
+    
+    /* 4. Enforce clean, square constraints for uploaded parental photos */
+    .aac-tile img {
+        max-height: 90% !important;
+        max-width: 40% !important;
+        height: clamp(28px, 7vh, 45px) !important;
+        aspect-ratio: 1 / 1 !important; /* Enforces a perfect square crop box */
+        object-fit: cover !important;    /* Prevents parental photos from squishing or skewing */
+        margin-bottom: 0 !important;     /* Removes vertical column spacing gap */
+    }
+    
+    .aac-tile span {
+        font-size: clamp(0.85rem, 2.5vh, 1.1rem) !important;
+        line-height: 1.1;
+    }
+    
+    /* 5. Remove the fixed height floor causing grid collapse */
+    .grid-cell-placeholder {
+        min-height: 0 !important; /* Allows cells to scale fluidly down to track size */
+        border-radius: 8px !important;
+    }
+    
+    .coord-indicator {
+        font-size: 0.65rem;
+    }
+    
+    /* 6. Scale page chips to fit shorter footer layers */
+    .page-tab-chip {
+        padding: 0 12px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+    
+    .nav-arrow-btn {
+        width: 32px;
+        border-radius: 5px;
+    }
 }

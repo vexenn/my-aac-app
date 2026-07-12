@@ -1,5 +1,7 @@
 import { store } from './state.js';
 import { db, initializeDatabase } from './db/database.js';
+import { initializeKeyboardAccessibility } from './keyboardHandler.js'; 
+import { gamepadHandler } from './gamepadHandler.js';
 
 // Grab DOM Elements from our index.html wireframe
 const gridBoard = document.getElementById('grid-board');
@@ -42,13 +44,22 @@ const tileImagePreviewContainer = document.getElementById('tile-image-preview-co
 const tileImagePreview = document.getElementById('tile-image-preview');
 const btnDeleteTile = document.getElementById('btn-delete-tile');
 
-// 🎙️ NEW: Voice Clip Recording DOM Hook Accessors
+// Voice Clip Recording DOM Hook Accessors
 const tileAudioHidden = document.getElementById('tile-audio-hidden');
 const btnStartRecord = document.getElementById('btn-start-record');
 const btnStopRecord = document.getElementById('btn-stop-record');
 const btnRemoveAudio = document.getElementById('btn-remove-audio');
 const audioPlaybackContainer = document.getElementById('audio-playback-container');
 const audioPreview = document.getElementById('audio-preview');
+
+// 🌟 NEW: Fullscreen, Help, and Support DOM Hooks
+const btnToggleFullscreen = document.getElementById('btn-toggle-fullscreen');
+const btnShowHelp = document.getElementById('btn-show-help');
+const btnShowSupport = document.getElementById('btn-show-support');
+const modalHelp = document.getElementById('modal-help');
+const modalSupport = document.getElementById('modal-support');
+const btnCloseHelp = document.getElementById('btn-close-help');
+const btnCloseSupport = document.getElementById('btn-close-support');
 
 // Native MediaRecorder Runtime Pointers
 let mediaRecorder = null;
@@ -168,7 +179,6 @@ async function renderActiveBoard(state) {
                             tileImagePreview.src = '';
                             btnRemoveImage.style.display = 'none';
 
-                            // Clean audio state elements completely on fresh slot choice
                             tileAudioHidden.value = '';
                             audioPreview.src = '';
                             audioPlaybackContainer.style.display = 'none';
@@ -320,7 +330,7 @@ btnRemoveImage.addEventListener('click', () => {
     tileImageInput.value = '';
 });
 
-// 🌟 NEW: Hardware Microphone Recording Stream Listeners
+// Hardware Microphone Recording Stream Listeners
 btnStartRecord.addEventListener('click', async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         alert("Audio microphone capture pipelines are restricted or unsupported on this tablet client browser device.");
@@ -349,7 +359,6 @@ btnStartRecord.addEventListener('click', async () => {
             };
             reader.readAsDataURL(audioBlob);
 
-            // Shutdown live mic hardware capture nodes immediately to free up device system RAM
             audioStream.getTracks().forEach(track => track.stop());
         });
 
@@ -377,6 +386,55 @@ btnRemoveAudio.addEventListener('click', () => {
     audioPlaybackContainer.style.display = 'none';
     btnRemoveAudio.style.display = 'none';
 });
+
+// 🌟 NEW: Fullscreen Protection API Toggle
+if (btnToggleFullscreen) {
+    btnToggleFullscreen.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().then(() => {
+                btnToggleFullscreen.textContent = "📺 Exit Fullscreen Mode";
+                btnToggleFullscreen.style.backgroundColor = "#E91E63";
+            }).catch(err => {
+                alert(`Could not enter fullscreen: ${err.message}. (Note: iOS Safari requires installing to Home Screen for fullscreen).`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().then(() => {
+                    btnToggleFullscreen.textContent = "📺 Enter Fullscreen Mode";
+                    btnToggleFullscreen.style.backgroundColor = "#2196F3";
+                });
+            }
+        }
+    });
+
+    // Listen for OS-level fullscreen changes (e.g. user pressing Escape)
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            btnToggleFullscreen.textContent = "📺 Enter Fullscreen Mode";
+            btnToggleFullscreen.style.backgroundColor = "#2196F3";
+        } else {
+            btnToggleFullscreen.textContent = "📺 Exit Fullscreen Mode";
+            btnToggleFullscreen.style.backgroundColor = "#E91E63";
+        }
+    });
+}
+
+// 🌟 NEW: Modal Open & Close Event Listeners
+if (btnShowHelp && modalHelp) {
+    btnShowHelp.addEventListener('click', () => modalHelp.showModal());
+    btnCloseHelp.addEventListener('click', () => modalHelp.close());
+    modalHelp.addEventListener('click', (e) => {
+        if (e.target === modalHelp) modalHelp.close(); // Close when clicking backdrop
+    });
+}
+
+if (btnShowSupport && modalSupport) {
+    btnShowSupport.addEventListener('click', () => modalSupport.showModal());
+    btnCloseSupport.addEventListener('click', () => modalSupport.close());
+    modalSupport.addEventListener('click', (e) => {
+        if (e.target === modalSupport) modalSupport.close(); // Close when clicking backdrop
+    });
+}
 
 // Global Sidebar Menu Deletion Action Handler
 if (btnDeleteTile) {
@@ -419,7 +477,7 @@ if (frmTileEditor) {
             col: document.getElementById('tile-col').value,
             masked: document.getElementById('tile-masked').checked,
             image: tileImageHidden.value || null,
-            audio: tileAudioHidden.value || null // 🌟 Connects recording input strings directly to submit fields
+            audio: tileAudioHidden.value || null 
         };
         
         await store.saveCustomTile(tileData);
@@ -481,6 +539,9 @@ btnDownloadVoice.addEventListener('click', async () => {
 async function bootstrapApp() {
     await initializeDatabase();
 
+    initializeKeyboardAccessibility();
+    gamepadHandler.listen();
+
     if (localStorage.getItem('aac_voice_installed') === 'true') {
         console.log("Persistent voice token discovered. Auto-warming local AI engine from browser cache...");
         store.initLocalAIEngine();
@@ -500,7 +561,6 @@ async function bootstrapApp() {
         btnUndo.disabled = !latestState.canUndo;
         btnRedo.disabled = !latestState.canRedo;
 
-        // Populate form inputs when editing an existing tile cleanly
         if (latestState.selectedTileForEdit) {
             const tile = latestState.selectedTileForEdit;
             document.getElementById('edit-tile-id').value = tile.id || '';
@@ -525,7 +585,6 @@ async function bootstrapApp() {
                 btnRemoveImage.style.display = 'none';
             }
 
-            // 🌟 Populate existing audio clips into administrative drawer view layout rows
             if (tile.audio) {
                 tileAudioHidden.value = tile.audio;
                 audioPreview.src = tile.audio;
@@ -543,7 +602,6 @@ async function bootstrapApp() {
             if (btnDeleteTile) btnDeleteTile.style.display = 'none';
         }
 
-        // Voice button status synchronization
         if (latestState.isVoiceLoading) {
             btnSpeak.textContent = "⏳ Warming Voice...";
             btnSpeak.style.backgroundColor = "#FFA726"; 

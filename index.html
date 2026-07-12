@@ -10,7 +10,6 @@
 </head>
 <body>
 
-    <!-- REGION A: The Sentence Bar Container -->
     <header id="sentence-container">
         <div id="sentence-display" aria-live="polite"></div>
         <div class="bar-controls">
@@ -19,24 +18,20 @@
         </div>
     </header>
 
-    <!-- REGION B: The Polymorphic Grid Board -->
     <main id="grid-board" role="region" aria-label="Communication Board"></main>
 
-    <!-- REGION C: Controlled Footer Layer -->
     <footer id="footer-controls">
         <button id="btn-home" class="admin-btn" style="display: none; background-color: #E91E63; z-index: 10;">↩ Back</button>
         
-        <!-- Dynamic Scrollable / Clickable Page Navigation Matrix -->
         <div class="footer-nav-wrapper">
             <button id="btn-nav-prev" class="nav-arrow-btn">◀</button>
             <div id="board-page-tabs" class="scrollable-tabs-container"></div>
             <button id="btn-nav-next" class="nav-arrow-btn">▶</button>
         </div>
 
-        <button id="btn-admin-gate" class="admin-btn">⚙️ Settings (Hold)</button>
+        <button id="btn-admin-gate" class="admin-btn">⚙️ Settings (Hold 5s)</button>
     </footer>
 
-    <!-- REGION D: Secure Admin Control Sidebar Panel -->
     <aside id="admin-sidebar" class="sidebar">
         <div class="sidebar-header">
             <h2>⚙️ Admin Control Panel</h2>
@@ -44,14 +39,12 @@
         </div>
         <div class="sidebar-content" style="overflow-y: auto; flex: 1;">
             
-            <!-- Undo / Redo Global Timeline Trackers -->
             <h3>Layout History</h3>
             <div style="display: flex; gap: 10px; margin-top: 5px; margin-bottom: 15px;">
                 <button id="btn-undo" class="control-btn clear-btn timeline-btn" style="flex: 1; padding: 10px; height: auto; font-size: 0.9rem;" disabled>↩️ Undo Edit</button>
                 <button id="btn-redo" class="control-btn clear-btn timeline-btn" style="flex: 1; padding: 10px; height: auto; font-size: 0.9rem;" disabled>↪️ Redo Edit</button>
             </div>
 
-            <!-- Core Page Addition & Deletion Management Panel -->
             <h3>📁 Manage Layout Pages</h3>
             <div style="display: flex; flex-direction: column; gap: 10px; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 5px;">
                 <div>
@@ -91,18 +84,21 @@
             <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0;">
 
             <h3>Visual Interface</h3>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px; margin-bottom: 15px; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid #e0e0e0;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px; margin-bottom: 10px; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid #e0e0e0;">
                 <label for="chk-grid-lines" style="font-weight: bold; cursor: pointer; color: #333; font-size: 0.95rem;">
                     🏁 Show Grid Tracking Lines
                 </label>
                 <input type="checkbox" id="chk-grid-lines" style="width: 22px; height: 22px; cursor: pointer;" checked>
             </div>
+            
+            <button type="button" id="btn-toggle-fullscreen" class="control-btn" style="width: 100%; padding: 12px; font-weight: bold; height: auto; background-color: #2196F3; color: white; margin-bottom: 15px;">
+                📺 Enter Fullscreen Mode
+            </button>
 
             <h3>✨ Manage Tiles</h3>
             <form id="frm-tile-editor" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
                 <input type="hidden" id="edit-tile-id" value="">
                 <input type="hidden" id="tile-image-hidden" value="">
-                <!-- Hidden storage anchor to preserve recorded custom audio data -->
                 <input type="hidden" id="tile-audio-hidden" value="">
 
                 <div>
@@ -122,7 +118,6 @@
                     </div>
                 </div>
 
-                <!-- 🎙️ Custom Voice Recording Interface Section -->
                 <div>
                     <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Custom Voice Recording (Optional)</label>
                     <div style="display: flex; gap: 10px; margin-top: 4px; align-items: center;">
@@ -181,11 +176,63 @@
             </button>
 
             <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;">
+                <button type="button" id="btn-show-help" class="control-btn speak-btn" style="width: 100%; padding: 12px; font-weight: bold; height: auto; background-color: #673AB7;">
+                    ❓ Help & User Guide
+                </button>
+                <button type="button" id="btn-show-support" class="control-btn" style="width: 100%; padding: 12px; font-weight: bold; height: auto; background-color: #607D8B; color: white;">
+                    ✉️ Contact / Support
+                </button>
+            </div>
+
             <button id="btn-lock-layout" class="control-btn clear-btn" style="width: 100%; padding: 12px; font-weight: bold; height: auto;">
                 🔒 Lock & Exit Admin Mode
             </button>
         </div>
     </aside>
+
+    <dialog id="modal-help" class="custom-modal">
+        <div class="modal-header" style="background-color: #673AB7;">
+            <h2>❓ AAC Application Guide</h2>
+            <button type="button" id="btn-close-help" class="control-btn clear-btn" style="padding: 6px 12px; font-size: 0.9rem; height: auto;">✕</button>
+        </div>
+        <div class="modal-body">
+            <h4>🔐 Unlocking Admin Mode</h4>
+            <p>To prevent accidental edits, press and hold the <b>Settings (Hold 5s)</b> button in the bottom right corner for exactly 5 seconds to unlock this control drawer.</p>
+            
+            <h4>➕ Adding & Editing Words</h4>
+            <p>While in Admin Mode, click any empty placeholder cell (e.g., R3 C4) to create a word. Type a label, upload a picture/symbol, or record your own voice clip using the microphone! Click an existing word to edit its contents or move it by dragging.</p>
+
+            <h4>🗑️ Deleting & Restoring Tiles</h4>
+            <p>To delete a word, click it in Admin Mode and press the red <b>Delete Selected Tile</b> button at the bottom of the drawer. If you make a mistake, click <b>↩️ Undo Edit</b> under Layout History to instantly restore deleted items.</p>
+
+            <h4>📺 Fullscreen Protection Mode</h4>
+            <p>Click <b>Enter Fullscreen Mode</b> inside the Admin drawer before giving the tablet to a child. This hides the operating system navigation bars so they cannot accidentally exit the app.</p>
+
+            <h4>♿ Assistive Switch Scanning</h4>
+            <p>The app supports Bluetooth buttons and spacebar scanning! Pressing the Spacebar or a connected game controller button automatically scans through available communication tiles.</p>
+        </div>
+    </dialog>
+
+    <dialog id="modal-support" class="custom-modal">
+        <div class="modal-header" style="background-color: #607D8B;">
+            <h2>✉️ Contact & Support</h2>
+            <button type="button" id="btn-close-support" class="control-btn clear-btn" style="padding: 6px 12px; font-size: 0.9rem; height: auto;">✕</button>
+        </div>
+        <div class="modal-body" style="text-align: center; padding: 30px 20px;">
+            <p style="font-size: 1.1rem; color: #333; line-height: 1.6;">
+                This Augmentative and Alternative Communication (AAC) application was engineered and developed by:
+            </p>
+            <h3 style="font-size: 1.5rem; color: #2196F3; margin: 15px 0;">Justin Davis</h3>
+            <p style="font-size: 0.95rem; color: #666; margin-bottom: 20px;">
+                For technical assistance, bug reporting, feature requests, or deployment support, please reach out via email:
+            </p>
+            <a href="mailto:vexenn897@gmail.com" style="display: inline-block; background-color: #4CAF50; color: white; text-decoration: none; font-weight: bold; padding: 12px 24px; border-radius: 8px; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);">
+                ✉️ vexenn897@gmail.com
+            </a>
+        </div>
+    </dialog>
 
     <script type="module" src="./src/main.js"></script>
 </body>
