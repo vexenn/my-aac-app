@@ -1,0 +1,78 @@
+/* Global Color Tokens (The Fitzgerald Key Standard) */
+:root {
+    --color-pronoun-bg: #FFF9C4; /* Soft Yellow */
+    --color-pronoun-border: #FBC02D;
+
+    --color-verb-bg: #E8F5E9; /* Soft Green */
+    --color-verb-border: #4CAF50;
+
+    --color-noun-bg: #FFE0B2; /* Soft Orange */
+    --color-noun-border: #FB8C00;
+
+    --color-social-bg: #FCE4EC; /* Soft Pink */
+    --color-social-border: #F06292;
+
+    --color-modifier-bg: #E1F5FE; /* Soft Blue (Adjectives/Adverbs) */
+    --color-modifier-border: #03A9F4;
+
+    --color-folder-bg: #EDE7F6; /* Soft Purple for Categories */
+    --color-folder-border: #673AB7;
+
+    /* Universal Layout Variables */
+    --tile-border-radius: 16px;
+    --tile-border-width: 4px;
+    --tile-font-size: 1.5rem;
+}
+
+/* Functional Tile Color Classes */
+
+.tile-pronoun {
+    background-color: var(--color-pronoun-bg);
+    border: var(--tile-border-width) solid var(--color-pronoun-border);
+}
+
+.tile-verb {
+    background-color: var(--color-verb-bg);
+    border: var(--tile-border-width) solid var(--color-verb-border);
+}
+
+.tile-noun {
+    background-color: var(--color-noun-bg);
+    border: var(--tile-border-width) solid var(--color-noun-border);
+}
+
+.tile-social {
+    background-color: var(--color-social-bg);
+    border: var(--tile-border-width) solid var(--color-social-border);
+}
+
+.tile-modifier {
+    background-color: var(--color-modifier-bg);
+    border: var(--tile-border-width) solid var(--color-modifier-border);
+}
+
+/* Folders get a distinct dashed or double border style to hint that they "open" */
+.tile-folder {
+    background-color: var(--color-folder-bg);
+    border: var(--tile-border-width) double var(--color-folder-border);
+    font-weight: bold;
+}
+
+/* The Masking Engine (Lifelong Scaling) */
+/* When a tile has the 'masked' utility class, it physically stays in the grid */
+/* to preserve the coordinate gaps,, but completely vanishes from view */
+
+.tile-masked {
+    opacity: 0 !important;
+    pointer-events: none !important; /* Prevents a toddler from accidentally tapping an invisible button */
+}
+
+/* Admin Mode Visual Feedback */
+/* When a parent turns on Admin Mode, give the unmasked buttons a subtle pulse */
+/* or shift to show that they are editable, and make the masked buttons faintly visible. */
+
+body.admin-active .tile-masked {
+    opacity: 0.3 !important;
+    pointer-events: auto !important;
+    border-style: dashed;
+}

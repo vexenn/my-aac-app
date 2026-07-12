@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Open AAC</title>
+
+    <link rel="stylesheet" href="./src/styles/main.css">
+    <link rel="stylesheet" href="./src/styles/fitzgerald.css">
+</head>
+<body>
+
+    <!-- REGION A: The Sentence Bar Container -->
+    <header id="sentence-container">
+        <div id="sentence-display" aria-live="polite"></div>
+        <div class="bar-controls">
+            <button id="btn-speak-sentence" class="control-btn speak-btn">🔊 Speak</button>
+            <button id="btn-clear-sentence" class="control-btn clear-btn">❌ Clear</button>
+        </div>
+    </header>
+
+    <!-- REGION B: The Polymorphic Grid Board -->
+    <main id="grid-board" role="region" aria-label="Communication Board"></main>
+
+    <!-- REGION C: Controlled Footer Layer -->
+    <footer id="footer-controls">
+        <button id="btn-home" class="admin-btn" style="display: none; background-color: #E91E63; z-index: 10;">↩ Back</button>
+        
+        <!-- Dynamic Scrollable / Clickable Page Navigation Matrix -->
+        <div class="footer-nav-wrapper">
+            <button id="btn-nav-prev" class="nav-arrow-btn">◀</button>
+            <div id="board-page-tabs" class="scrollable-tabs-container"></div>
+            <button id="btn-nav-next" class="nav-arrow-btn">▶</button>
+        </div>
+
+        <button id="btn-admin-gate" class="admin-btn">⚙️ Settings (Hold)</button>
+    </footer>
+
+    <!-- REGION D: Secure Admin Control Sidebar Panel -->
+    <aside id="admin-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2>⚙️ Admin Control Panel</h2>
+            <button id="btn-close-sidebar" class="control-btn clear-btn">✕ Close</button>
+        </div>
+        <div class="sidebar-content" style="overflow-y: auto; flex: 1;">
+            
+            <!-- Undo / Redo Global Timeline Trackers -->
+            <h3>Layout History</h3>
+            <div style="display: flex; gap: 10px; margin-top: 5px; margin-bottom: 15px;">
+                <button id="btn-undo" class="control-btn clear-btn timeline-btn" style="flex: 1; padding: 10px; height: auto; font-size: 0.9rem;" disabled>↩️ Undo Edit</button>
+                <button id="btn-redo" class="control-btn clear-btn timeline-btn" style="flex: 1; padding: 10px; height: auto; font-size: 0.9rem;" disabled>↪️ Redo Edit</button>
+            </div>
+
+            <!-- Core Page Addition & Deletion Management Panel -->
+            <h3>📁 Manage Layout Pages</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 5px;">
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Standalone Page Name</label>
+                    <input type="text" id="page-name-input" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;" placeholder="e.g., School Day">
+                </div>
+                <button id="btn-create-page" class="control-btn speak-btn" style="padding: 10px; height: auto; font-size: 0.9rem; margin-top: 2px;">➕ Create New Page</button>
+                <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 4px 0;">
+                <button id="btn-delete-page" class="control-btn clear-btn" style="padding: 10px; height: auto; font-size: 0.9rem; background-color: #d32f2f;">🗑️ Delete Current Page</button>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 15px 0;">
+
+            <h3>Voice Configurations</h3>
+            <p style="font-size: 0.95rem; color: #666; line-height: 1.4; margin-bottom: 10px;">
+                Equip this tablet with a high-fidelity, neural child voice engine cached locally for permanent offline usage.
+            </p>
+            
+            <button id="btn-download-voice" class="control-btn speak-btn" style="width: 100%; height: auto; padding: 12px;">
+                📥 Download Free Premium Voice
+            </button>
+            
+            <div id="download-status" style="margin-top: 10px; font-weight: bold; font-size: 0.95rem; text-align: center; color: #555;">
+                Status: Engine on Standby
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 15px 0;">
+
+            <h3>Device Speech Behavior</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <label for="chk-speak-on-tap" style="font-weight: bold; cursor: pointer; color: #333; font-size: 0.95rem;">
+                    📢 Speak Instantly on Tap
+                </label>
+                <input type="checkbox" id="chk-speak-on-tap" style="width: 22px; height: 22px; cursor: pointer;" checked>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+
+            <h3>Visual Interface</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px; margin-bottom: 15px; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <label for="chk-grid-lines" style="font-weight: bold; cursor: pointer; color: #333; font-size: 0.95rem;">
+                    🏁 Show Grid Tracking Lines
+                </label>
+                <input type="checkbox" id="chk-grid-lines" style="width: 22px; height: 22px; cursor: pointer;" checked>
+            </div>
+
+            <h3>✨ Manage Tiles</h3>
+            <form id="frm-tile-editor" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                <input type="hidden" id="edit-tile-id" value="">
+                <input type="hidden" id="tile-image-hidden" value="">
+                <!-- Hidden storage anchor to preserve recorded custom audio data -->
+                <input type="hidden" id="tile-audio-hidden" value="">
+
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Tile Label / Word</label>
+                    <input type="text" id="tile-label" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;">
+                </div>
+
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Tile Picture / Visual Icon</label>
+                    <input type="file" id="tile-image-input" accept="image/*" capture="environment" style="display: none;">
+                    <div style="display: flex; gap: 10px; margin-top: 4px; align-items: center;">
+                        <button type="button" id="btn-trigger-upload" class="control-btn" style="flex: 1; padding: 10px; font-size: 0.85rem; background-color: #607D8B; color: white; height: auto;">📷 Choose / Take Photo</button>
+                        <button type="button" id="btn-remove-image" class="control-btn clear-btn" style="padding: 10px; font-size: 0.85rem; display: none; height: auto; max-width: 80px; background-color: #757575;">✕ Strip</button>
+                    </div>
+                    <div id="tile-image-preview-container" style="display: none; justify-content: center; margin-top: 8px; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px;">
+                        <img id="tile-image-preview" src="" style="max-height: 80px; max-width: 100%; object-fit: contain;">
+                    </div>
+                </div>
+
+                <!-- 🎙️ Custom Voice Recording Interface Section -->
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Custom Voice Recording (Optional)</label>
+                    <div style="display: flex; gap: 10px; margin-top: 4px; align-items: center;">
+                        <button type="button" id="btn-start-record" class="control-btn" style="flex: 1; padding: 10px; font-size: 0.85rem; background-color: #009688; color: white; height: auto;">🎙️ Record Voice</button>
+                        <button type="button" id="btn-stop-record" class="control-btn clear-btn" style="flex: 1; padding: 10px; font-size: 0.85rem; background-color: #ff5722; display: none; height: auto;">🛑 Stop Recording</button>
+                        <button type="button" id="btn-remove-audio" class="control-btn clear-btn" style="padding: 10px; font-size: 0.85rem; display: none; height: auto; max-width: 80px; background-color: #757575;">✕ Strip</button>
+                    </div>
+                    <div id="audio-playback-container" style="display: none; margin-top: 8px; align-items: center; gap: 10px; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px;">
+                        <span style="font-size: 0.85rem; color: #666; font-weight: bold;">Preview:</span>
+                        <audio id="audio-preview" controls style="flex: 1; height: 32px;"></audio>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Speak Override (Optional)</label>
+                    <input type="text" id="tile-speak" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;" placeholder="Uses label if left blank">
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Grid Row (1-4)</label>
+                        <input type="number" id="tile-row" min="1" max="4" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Grid Col (1-6)</label>
+                        <input type="number" id="tile-col" min="1" max="6" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;">
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-weight: bold; font-size: 0.85rem; color: #555;">Grammar Style Group (Fitzgerald Key)</label>
+                    <select id="tile-color-class" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;">
+                        <option value="tile-pronoun">Yellow (Pronoun)</option>
+                        <option value="tile-verb">Green (Verb / Action)</option>
+                        <option value="tile-noun">Orange (Noun / Object)</option>
+                        <option value="tile-social">Pink (Social / Expression)</option>
+                        <option value="tile-modifier">Blue (Adjective / Modifier)</option>
+                        <option value="tile-folder">Purple Folder (Opens Sub-Category ➔)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px; background: #fafafa; padding: 10px; border-radius: 6px; border: 1px solid #e0e0e0;">
+                    <label for="tile-masked" style="font-weight: bold; font-size: 0.85rem; color: #333; cursor: pointer;">
+                        🙈 Mask / Hide Tile from Child Grid
+                    </label>
+                    <input type="checkbox" id="tile-masked" style="width: 20px; height: 20px; cursor: pointer;">
+                </div>
+
+                <button type="submit" id="btn-save-tile" class="control-btn speak-btn" style="width: 100%; margin-top: 5px; padding: 12px; font-weight: bold; height: auto;">
+                    💾 Save Communication Tile
+                </button>
+            </form>
+
+            <button type="button" id="btn-delete-tile" class="control-btn clear-btn" style="width: 100%; margin-top: 12px; padding: 12px; font-weight: bold; height: auto; background-color: #d32f2f; display: none;">
+                🗑️ Delete Selected Tile
+            </button>
+
+            <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+            <button id="btn-lock-layout" class="control-btn clear-btn" style="width: 100%; padding: 12px; font-weight: bold; height: auto;">
+                🔒 Lock & Exit Admin Mode
+            </button>
+        </div>
+    </aside>
+
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
