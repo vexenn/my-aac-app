@@ -1,7 +1,7 @@
 import { store } from './state.js';
 import { db, initializeDatabase } from './db/database.js';
-import { initializeKeyboardAccessibility } from './keyboardHandler.js'; 
-import { gamepadHandler } from './gamepadHandler.js';
+import { initializeKeyboardAccessibility } from './utils/keyboardHandler.js'; 
+import { gamepadHandler } from './utils/gamepadHandler.js';
 
 // Grab DOM Elements from our index.html wireframe
 const gridBoard = document.getElementById('grid-board');
