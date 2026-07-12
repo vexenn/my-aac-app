@@ -398,6 +398,10 @@ body.admin-active .coord-indicator {
     margin: 0;
 }
 
+.modal-header .control-btn {
+    flex: none;
+}
+
 .modal-body {
     padding: 20px;
     overflow-y: auto;
