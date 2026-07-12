@@ -1,3 +1,5 @@
+/* src/styles/fitzgerald.css */
+
 /* Global Color Tokens (The Fitzgerald Key Standard) */
 :root {
     --color-pronoun-bg: #FFF9C4; /* Soft Yellow */
@@ -20,8 +22,8 @@
 
     /* Universal Layout Variables */
     --tile-border-radius: 16px;
-    --tile-border-width: 4px;
-    --tile-font-size: 1.5rem;
+    --tile-border-width: 3px; /* Slightly slimmed down to improve mobile cell spacing */
+    --tile-font-size: clamp(0.95rem, 3vw, 1.35rem); /* Proportional mobile text responsiveness */
 }
 
 /* Functional Tile Color Classes */
@@ -46,6 +48,11 @@
     border: var(--tile-border-width) solid var(--color-social-border);
 }
 
+.tile-masked {
+    opacity: 0 !important;
+    pointer-events: none !important; /* Prevents accidental hidden multi-taps */
+}
+
 .tile-modifier {
     background-color: var(--color-modifier-bg);
     border: var(--tile-border-width) solid var(--color-modifier-border);
@@ -58,19 +65,7 @@
     font-weight: bold;
 }
 
-/* The Masking Engine (Lifelong Scaling) */
-/* When a tile has the 'masked' utility class, it physically stays in the grid */
-/* to preserve the coordinate gaps,, but completely vanishes from view */
-
-.tile-masked {
-    opacity: 0 !important;
-    pointer-events: none !important; /* Prevents a toddler from accidentally tapping an invisible button */
-}
-
 /* Admin Mode Visual Feedback */
-/* When a parent turns on Admin Mode, give the unmasked buttons a subtle pulse */
-/* or shift to show that they are editable, and make the masked buttons faintly visible. */
-
 body.admin-active .tile-masked {
     opacity: 0.3 !important;
     pointer-events: auto !important;

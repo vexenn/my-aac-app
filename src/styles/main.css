@@ -9,15 +9,22 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+    height: 100%;
+    height: -webkit-fill-available; /* Locks viewport dimensions on mobile browsers */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent manual elastic drag scrolling */
+}
+
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #f5f5f5;
     color: #333;
+    height: 100%;
     width: 100vw;
-    height: 100vh;
-    overflow: hidden; /* Force zero scrolling across the app */
     
-    /* Divide viewport into 3 strict rows using Flexbox */
+    /* Divide viewport into strict rows using flex layout boxes */
     display: flex;
     flex-direction: column;
 }
@@ -25,6 +32,8 @@ body {
 /* 2. Region A: The Sentence Bar Container */
 #sentence-container {
     height: 15vh; /* Takes exactly 15% of vertical screen space */
+    min-height: 80px; /* Safety operational threshold boundary */
+    flex-shrink: 0; /* Prevents the bar from flattening on low resolutions */
     background-color: #ffffff;
     border-bottom: 2px solid #e0e0e0;
     padding: 10px;
@@ -68,14 +77,15 @@ body {
 
 /* 3. Region B: The Polymorphic Grid Board */
 #grid-board {
-    flex: 1; /* Automatically consumes all remaining vertical space (approx 77vh) */
+    flex: 1; /* Automatically consumes all remaining vertical height space */
+    min-height: 0; /* Critical mobile constraint: allows the container to shrink properly */
     padding: 15px;
     
     /* The Core Coordinate Engine */
     display: grid;
-    /* Read dynamic columns/rows set by JavaScript variables (fallbacks to 6x4) */
-    grid-template-columns: repeat(var(--grid-cols, 6), 1fr);
-    grid-template-rows: repeat(var(--grid-rows, 4), 1fr);
+    /* 🌟 minmax(0, 1fr) explicitly stops text-heavy or empty tracks from collapsing into strips */
+    grid-template-columns: repeat(var(--grid-cols, 6), minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(var(--grid-rows, 4), minmax(0, 1fr)) !important;
     gap: 12px;
 }
 
@@ -92,6 +102,8 @@ body {
     cursor: pointer;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    width: 100%;
+    height: 100%;
     
     /* Disables popups and visual selection indicators when toddler spams inputs */
     user-select: none;
@@ -115,12 +127,15 @@ body {
 /* 5. Region C: Controlled Footer Layer */
 #footer-controls {
     height: 8vh; /* Fixed 8% space configuration strip */
+    min-height: 60px; /* Guarantees layout buttons are always touch-accessible */
+    flex-shrink: 0; /* 🌟 Enforces that this panel is pinned and never pushed off-screen */
     background-color: #333;
     color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
+    box-sizing: border-box;
 }
 
 #active-board-title {
@@ -136,6 +151,7 @@ body {
     border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
+    touch-action: none; /* Prevents long-press browser magnification conflicts */
 }
 
 /* 6. Sidebar Drawer Structural Components */
@@ -193,7 +209,8 @@ body.sidebar-open .sidebar {
     border: 1px dashed #e0e0e0;
     background-color: #fafafa;
     border-radius: 12px;
-    min-height: 90px;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
